@@ -7,14 +7,36 @@ import time
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 }
+urls_serie_a = {
+    'atletico_mineiro': 'https://www.transfermarkt.com.br/clube-atletico-mineiro/startseite/verein/330',
+    'flamengo': 'https://www.transfermarkt.com.br/flamengo-rio-de-janeiro/startseite/verein/614',
+    'palmeiras': 'https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/startseite/verein/1023',
+    'sao_paulo': 'https://www.transfermarkt.com.br/fc-sao-paulo/startseite/verein/585',
+    'corinthians': 'https://www.transfermarkt.com.br/clube-palmeiras/startseite/verein/199',
+    'internacional': 'https://www.transfermarkt.com.br/sc-internacional-porto-alegre/startseite/verein/6600',
+    'grêmio': 'https://www.transfermarkt.com.br/gremio-porto-alegre/startseite/verein/210',
+    'fortaleza': 'https://www.transfermarkt.com.br/fortaleza-esporte-clube/startseite/verein/10870',
+    'ceara': 'https://www.transfermarkt.com.br/ceara-sporting-club/startseite/verein/2029',
+    'bahia': 'https://www.transfermarkt.com.br/esporte-clube-bahia/startseite/verein/10010',
+    'vasco_da_gama': 'https://www.transfermarkt.com.br/vasco-da-gama-rio-de-janeiro/startseite/verein/978',
+    'botafogo': 'https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/startseite/verein/537',
+    'fluminense': 'https://www.transfermarkt.com.br/fluminense-rio-de-janeiro/startseite/verein/2462',
+    'mirassol': 'https://www.transfermarkt.com.br/mirassol-futebol-clube-sp-/startseite/verein/3876',
+    'santos': 'https://www.transfermarkt.com.br/fc-santos/startseite/verein/221',
+    'sport_recife': 'https://www.transfermarkt.com.br/sport-club-do-recife/startseite/verein/8718',
+    'juventude': 'https://www.transfermarkt.com.br/esporte-clube-juventude/startseite/verein/10492',
+    'vitória': 'https://www.transfermarkt.com.br/esporte-clube-vitoria/startseite/verein/2125',
+    'cruzeiro': 'https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/startseite/verein/609',
+    'bragantino': 'https://www.transfermarkt.com.br/red-bull-bragantino/startseite/verein/8793/saison_id/2024'  
+}
 
-def scrape_atletico_mineiro():
+def scrape():
     # URL completa com domínio
-    url = "https://www.transfermarkt.com.br/clube-atletico-mineiro/startseite/verein/330"
+    url = urls_serie_a['atletico_mineiro']
     
     try:
         # Fazer a requisição
-        print("Acessando a página do Atlético Mineiro...")
+        print("Acessando a página do {}...".format(urls_serie_a['atletico_mineiro']))
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         
@@ -96,7 +118,7 @@ def scrape_atletico_mineiro():
                             if height_element:
                                 player_height = height_element.get_text(strip=True)
                             
-                            time.sleep(1)  # Respeitar o servidor
+                            time.sleep(5)  # Respeitar o servidor
                             
                         except Exception as e:
                             print(f"    Erro ao acessar página do {name}: {e}")
@@ -106,7 +128,8 @@ def scrape_atletico_mineiro():
                         'Nome': name,
                         'Idade': age,
                         'Valor': value,
-                        'Altura': player_height
+                        'Altura': player_height,
+                        'time': club_name.get_text(strip=True)
                     }
                     
                     players.append(player_data)
@@ -134,13 +157,13 @@ def main():
     print("Aguardando carregamento da página...")
     
     # Executar o scraping
-    df = scrape_atletico_mineiro()
+    df = scrape()
     
     if df is not None and not df.empty:
         # Salvar em CSV
-        df.to_csv('atletico_mineiro_elenco.csv', index=False, encoding='utf-8')
-        print("\nDados salvos em 'atletico_mineiro_elenco.csv'")
-        
+        df.to_csv('jogadores.csv', index=False, encoding='utf-8')
+        print("\nDados salvos em 'jogadores.csv'")
+
         # Mostrar preview dos dados
         print("\nPreview dos dados:")
         print(df.head())
